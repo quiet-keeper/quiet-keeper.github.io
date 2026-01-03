@@ -34,31 +34,45 @@
     </div>
 
     <script>
-        
-        const MY_SECRET_EMAIL = "izuzapasnow@gmail.com";
+    
+    const MY_SECRET_EMAIL = "izuzapasnow@gmail.com";
+    const EXPECTED_KEYWORD = "resonance";
 
-        document.getElementById('finalForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+    document.getElementById('finalForm').addEventListener('submit', function(event) {
+        event.preventDefault();
 
-            const key = document.getElementById('key').value;
-            const essay = document.getElementById('essay').value;
+        const key = document.getElementById('key').value.trim();
+        const essay = document.getElementById('essay').value.trim();
 
-            
-            if (!key.includes('resonance')) { 
-                alert('Ключ не распознан.');
-                return;
-            }
+        if (!key.includes(EXPECTED_KEYWORD)) {
+            alert('Ключ не распознан. Проверь, правильно ли ты его ввёл.');
+            return;
+        }
 
-            const subject = `Новый сигнал от ${key.slice(0, 5)}...`;
-            const body = `Ключ: ${key}\n\nОтвет:\n${essay}\n\n---\nОтправлено с финальной формы.`;
+        const subject = `Сигнал: ${key.slice(0, 10)}...`;
+        const body = `Ключ: ${key}\n\nОтвет:\n${essay}\n\n---\nОтправлено с финальной формы.`;
 
-            
-            window.open(`mailto:${MY_SECRET_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+        const mailtoLink = `mailto:${MY_SECRET_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.open(mailtoLink);
 
-            
-            document.getElementById('successMessage').style.display = 'block';
-            document.getElementById('finalForm').style.display = 'none';
-        });
-    </script>
-</body>
-</html>
+        setTimeout(() => {
+            const fallbackDiv = document.createElement('div');
+            fallbackDiv.className = 'message';
+            fallbackDiv.innerHTML = `
+                <h3>Если письмо не открылось — сделай следующее:</h3>
+                <p>1. Открой свой почтовый клиент (или ProtonMail в браузере).</p>
+                <p>2. Создай новое письмо на адрес: <strong>${izuzapasnow@gmail.com}</strong></p>
+                <p>3. Тема: <code>${subject}</code></p>
+                <p>4. Текст письма (скопируй):</p>
+                <textarea style="width:100%; height:100px; background:#222; color:#ccc; border:1px solid #444; padding:10px; margin:10px 0;" readonly>${body}</textarea>
+                <p>5. Отправь его.</p>
+                <p><em>Сигнал будет считаться отправленным только после этого.</em></p>
+            `;
+            document.getElementById('successMessage').after(fallbackDiv);
+            fallbackDiv.style.display = 'block';
+        }, 1000); 
+
+        document.getElementById('successMessage').style.display = 'block';
+        document.getElementById('finalForm').style.display = 'none';
+    });
+</script>
