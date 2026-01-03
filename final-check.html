@@ -17,62 +17,73 @@
     <h1>Последний Рубеж</h1>
     <p>Автоматические механизмы отключены. Дальше нужно идти пешком.</p>
     <p><strong>Задание:</strong> 
-    <p> Пространство на Земле никак не отличается от космического. За пределами взоров обычных людей есть место где кто-то ждёт ответа со звёзд пока не раствориться в пустоте одиночества. Ты прошел долгий путь. Вложи душу, свои мысли  </p>
-
-    <form id="finalForm">
+    <p> Пространство на Земле никак не отличается от космического. За пределами взоров обычных людей есть место где кто-то ждёт ответа со звёзд пока не раствориться в пустоте одиночества. Ты прошел долгий путь. Вложи душу, свои мысли  
+    const body = `Ключ: ${key}\n\nОтвет:\n${essay}\n\n---\n\n[Если хочешь получить ответ — приложи к своему письму СВОЙ открытый PGP-ключ или свой Session ID.]`; 
+          <form id="finalForm">
         <label>Ключ доступа (тот, что ты получил в конце):</label>
         <input type="text" id="key" name="key" required>
 
-        <label>Твой ответ (мысль, чувства, что угодно) :</label>
+        <label>Твой ответ:</label>
         <textarea id="essay" name="essay" rows="6" required></textarea>
 
-        <button type="submit">Отправить сигнал</button>
+        <button type="submit">Сгенерировать сигнал</button>
     </form>
 
     <div id="successMessage" class="message">
-        Сигнал принят. Ожидай.
+        <h3>Сигнал сформирован.</h3>
+        <p>Чтобы он дошёл, тебе нужно:</p>
+        <ol>
+            <li>Открыть свой почтовый клиент (или зайти на ProtonMail/Tutanota).</li>
+            <li>Создать новое письмо на адрес: <br><strong><code id="targetEmail">izuzapasnow@gmail.com</code></strong></li>
+            <li>Скопировать и вставить <strong>Тему</strong> и <strong>Текст</strong> письма из полей ниже.</li>
+            <li>Отправить.</li>
+        </ol>
+        <p><strong>Тема письма:</strong><br>
+        <code id="mailSubject" style="display:block; background:#222; padding:10px; margin:5px 0; word-break:break-all;"></code></p>
+        <p><strong>Текст письма:</strong><br>
+        <textarea id="mailBody" style="width:100%; height:150px; background:#222; color:#ccc; border:1px solid #444; padding:10px; margin:5px 0;" readonly></textarea></p>
+        <p><em>Сигнал будет считаться отправленным только после этого.</em></p>
     </div>
 
     <script>
-    
-    const MY_SECRET_EMAIL = "izuzapasnow@gmail.com";
-    const EXPECTED_KEYWORD = "resonance";
+        const EXPECTED_KEYWORD = "resonance";
+        const YOUR_EMAIL = "izuzapasnow@gmail.com";
 
-    document.getElementById('finalForm').addEventListener('submit', function(event) {
-        event.preventDefault();
+        const form = document.getElementById('finalForm');
+        const successDiv = document.getElementById('successMessage');
+        const subjectField = document.getElementById('mailSubject');
+        const bodyField = document.getElementById('mailBody');
+        const emailField = document.getElementById('targetEmail');
 
-        const key = document.getElementById('key').value.trim();
-        const essay = document.getElementById('essay').value.trim();
+        emailField.textContent = YOUR_EMAIL;
 
-        if (!key.includes(EXPECTED_KEYWORD)) {
-            alert('Ключ не распознан. Проверь, правильно ли ты его ввёл.');
-            return;
-        }
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
 
-        const subject = `Сигнал: ${key.slice(0, 10)}...`;
-        const body = `Ключ: ${key}\n\nОтвет:\n${essay}\n\n---\nОтправлено с финальной формы.`;
+            const key = document.getElementById('key').value.trim();
+            const essay = document.getElementById('essay').value.trim();
 
-        const mailtoLink = `mailto:${MY_SECRET_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        window.open(mailtoLink);
+            if (!key.includes(EXPECTED_KEYWORD)) {
+                alert('Ключ не распознан.');
+                return;
+            }
 
-        setTimeout(() => {
-            const fallbackDiv = document.createElement('div');
-            fallbackDiv.className = 'message';
-            fallbackDiv.innerHTML = `
-                <h3>Если письмо не открылось — сделай следующее:</h3>
-                <p>1. Открой свой почтовый клиент (или ProtonMail в браузере).</p>
-                <p>2. Создай новое письмо на адрес: <strong>${izuzapasnow@gmail.com}</strong></p>
-                <p>3. Тема: <code>${subject}</code></p>
-                <p>4. Текст письма (скопируй):</p>
-                <textarea style="width:100%; height:100px; background:#222; color:#ccc; border:1px solid #444; padding:10px; margin:10px 0;" readonly>${body}</textarea>
-                <p>5. Отправь его.</p>
-                <p><em>Сигнал будет считаться отправленным только после этого.</em></p>
-            `;
-            document.getElementById('successMessage').after(fallbackDiv);
-            fallbackDiv.style.display = 'block';
-        }, 1000); 
+            const subject = `Сигнал: ${key.slice(0, 15)}`;
+            const body = `Ключ: ${key}\n\nОтвет:\n${essay}\n\n---\n`;
 
-        document.getElementById('successMessage').style.display = 'block';
-        document.getElementById('finalForm').style.display = 'none';
-    });
-</script>
+            subjectField.textContent = subject;
+            bodyField.value = body;
+            successDiv.style.display = 'block';
+            form.style.display = 'none';
+
+            const copyButton = document.createElement('button');
+            copyButton.textContent = 'Скопировать текст письма';
+            copyButton.style.marginTop = '10px';
+            copyButton.onclick = function() {
+                bodyField.select();
+                document.execCommand('copy');
+                alert('Текст скопирован в буфер обмена.');
+            };
+            bodyField.parentNode.appendChild(copyButton);
+        });
+    </script>
