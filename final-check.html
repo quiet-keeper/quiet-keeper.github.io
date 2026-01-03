@@ -4,83 +4,60 @@
     <title>Последний Рубеж</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: 'Courier New', monospace; background: #111; color: #ddd; max-width: 700px; margin: 50px auto; padding: 30px; border: 1px solid #333; }
+        body { font-family: 'Courier New', monospace; background: #111; color: #ddd; max-width: 700px; margin: 50px auto; padding: 30px; border: 1px solid #333; text-align: center; }
         h1 { color: #8a8; border-bottom: 1px solid #444; padding-bottom: 10px; }
-        label { display: block; margin-top: 20px; color: #aaa; }
-        input, textarea { width: 100%; background: #222; color: #ccc; border: 1px solid #444; padding: 10px; margin-top: 5px; font-family: inherit; }
-        button { background: #333; color: #8a8; border: 1px solid #555; padding: 10px 25px; margin-top: 25px; cursor: pointer; }
-        button:hover { background: #3a3a3a; }
-        .message { margin-top: 20px; padding: 15px; background: #1a2a1a; border: 1px solid #383; display: none; }
+        .box { background: #1a1a1a; border: 1px solid #333; padding: 25px; margin: 25px 0; }
+        input { width: 80%; padding: 12px; background: #222; color: #ccc; border: 1px solid #444; text-align: center; font-size: 1.1em; }
+        button { background: #2a4a2a; color: #8f8; border: none; padding: 15px 30px; font-size: 1.1em; cursor: pointer; margin-top: 20px; }
+        button:hover { background: #3a5a3a; }
+        .hidden { display: none; }
+        #discordLink { word-break: break-all; color: #8af; font-weight: bold; font-size: 1.2em; margin: 20px 0; padding: 15px; background: #1a2a3a; border: 1px dashed #556; }
+        #error { color: #f88; margin-top: 15px; }
     </style>
 </head>
 <body>
     <h1>Последний Рубеж</h1>
-    <p>Автоматические механизмы отключены. Дальше нужно идти пешком.</p>
-    <p><strong>Задание:</strong> 
-    <p> Пространство на Земле никак не отличается от космического. За пределами взоров обычных людей есть место где кто-то ждёт ответа со звёзд пока не раствориться в пустоте одиночества. Ты прошел долгий путь. Вложи душу, свои мысли. Если хочешь получить ответ, приложи к письму способ связаться с тобой 
-        <label>Ключ доступа:</label>
-        <input type="text" id="key" name="key" required>
-        <label>Твой ответ:</label>
-        <textarea id="essay" name="essay" rows="6" required></textarea>
+    <p>Автоматические механизмы отключены. Остался последний шаг.</p>
 
-        <button type="submit">Сгенерировать сигнал</button>
-    </form>
+    <div class="box">
+        <p><strong>Введи финальный ключ, полученный в пути:</strong></p>
+        <input type="text" id="keyInput" placeholder="...">
+        <button onclick="checkKey()">Проверить ключ</button>
+        <p id="error"></p>
+    </div>
 
-    <div id="successMessage" class="message">
-        <h3>Сигнал сформирован.</h3>
-        <p>Чтобы он дошёл, тебе нужно:</p>
-        <ol>
-            <li>Открыть свой почтовый клиент (или зайти на ProtonMail/Tutanota).</li>
-            <li>Создать новое письмо на адрес: <br><strong><code id="targetEmail">izuzapasnow@gmail.com</code></strong></li>
-            <li>Скопировать и вставить <strong>Тему</strong> и <strong>Текст</strong> письма из полей ниже.</li>
-            <li>Отправить.</li>
-        </ol>
-        <p><strong>Тема письма:</strong><br>
-        <code id="mailSubject" style="display:block; background:#222; padding:10px; margin:5px 0; word-break:break-all;"></code></p>
-        <p><strong>Текст письма:</strong><br>
-        <textarea id="mailBody" style="width:100%; height:150px; background:#222; color:#ccc; border:1px solid #444; padding:10px; margin:5px 0;" readonly></textarea></p>
-        <p><em>Сигнал будет считаться отправленным только после этого.</em></p>
+    <div id="successBox" class="box hidden">
+        <p>Ключ принят. Доступ разрешён.</p>
+        <p>Добро пожаловать. Ты больше не одинок. Используй приглашение ниже:</p>
+        <div id="discordLink">Загрузка...</div>
+        <p><small>Дальнейшие инструкции — там.</small></p>
+        <p><em>Это приглашение действует ограниченное время.</em></p>
     </div>
 
     <script>
-        const EXPECTED_KEYWORD = "resonance";
-        const YOUR_EMAIL = "izuzapasnow@gmail.com";
+        const SECRET_KEY = "UDFj-39546284";
+        const DISCORD_INVITE_URL = "https://discord.gg/5wkrE8pZ8A";
 
-        const form = document.getElementById('finalForm');
-        const successDiv = document.getElementById('successMessage');
-        const subjectField = document.getElementById('mailSubject');
-        const bodyField = document.getElementById('mailBody');
-        const emailField = document.getElementById('targetEmail');
+        function checkKey() {
+            const userInput = document.getElementById('keyInput').value.trim().toLowerCase();
+            const errorElem = document.getElementById('error');
+            errorElem.textContent = '';
 
-        emailField.textContent = YOUR_EMAIL;
-
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const key = document.getElementById('key').value.trim();
-            const essay = document.getElementById('essay').value.trim();
-
-            if (!key.includes(EXPECTED_KEYWORD)) {
-                alert('Ключ не распознан.');
-                return;
+            if (userInput.includes(SECRET_KEY)) {
+            
+                document.querySelector('.box').classList.add('hidden');
+                document.getElementById('successBox').classList.remove('hidden');
+                document.getElementById('discordLink').innerHTML = 
+                    `<a href="${DISCORD_INVITE_URL}" target="_blank">${DISCORD_INVITE_URL}</a>`;
+            } else {
+                errorElem.textContent = 'Ключ не распознан.';
             }
+        }
 
-            const subject = `Сигнал: ${key.slice(0, 15)}`;
-            const body = `Ключ: ${key}\n\nОтвет:\n${essay}\n\n---\n`;
-
-            subjectField.textContent = subject;
-            bodyField.value = body;
-            successDiv.style.display = 'block';
-            form.style.display = 'none';
-
-            const copyButton = document.createElement('button');
-            copyButton.textContent = 'Скопировать текст письма';
-            copyButton.style.marginTop = '10px';
-            copyButton.onclick = function() {
-                bodyField.select();
-                document.execCommand('copy');
-                alert('Текст скопирован в буфер обмена.');
-            };
-            bodyField.parentNode.appendChild(copyButton);
+        
+        document.getElementById('keyInput').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') checkKey();
         });
     </script>
+</body>
+</html>
