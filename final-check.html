@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Последний Рубеж</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: 'Courier New', monospace; background: #111; color: #ddd; max-width: 700px; margin: 50px auto; padding: 30px; border: 1px solid #333; }
+        h1 { color: #8a8; border-bottom: 1px solid #444; padding-bottom: 10px; }
+        label { display: block; margin-top: 20px; color: #aaa; }
+        input, textarea { width: 100%; background: #222; color: #ccc; border: 1px solid #444; padding: 10px; margin-top: 5px; font-family: inherit; }
+        button { background: #333; color: #8a8; border: 1px solid #555; padding: 10px 25px; margin-top: 25px; cursor: pointer; }
+        button:hover { background: #3a3a3a; }
+        .message { margin-top: 20px; padding: 15px; background: #1a2a1a; border: 1px solid #383; display: none; }
+    </style>
+</head>
+<body>
+    <h1>Последний Рубеж</h1>
+    <p>Автоматические механизмы отключены. Дальше нужно идти пешком.</p>
+    <p><strong>Задание:</strong> 
+    <p>О Пространство на Земле никак не отличается от космического. За пределами взоров обычных людей есть место где кто-то ждёт ответа со звёзд пока не раствориться в пустоте одиночества. Вложи душу. Жди </p>
+
+    <form id="finalForm">
+        <label>Ключ доступа (тот, что ты получил в конце):</label>
+        <input type="text" id="key" name="key" required>
+
+        <label>Твой ответ (эссе, мысль, образ):</label>
+        <textarea id="essay" name="essay" rows="6" required></textarea>
+
+        <button type="submit">Отправить сигнал</button>
+    </form>
+
+    <div id="successMessage" class="message">
+        Сигнал принят. Ожидай. Если в твоём ключе есть резонанс — ответ придёт в тишине.
+    </div>
+
+    <script>
+        
+        const MY_SECRET_EMAIL = "izuzapasnow@gmail.com";
+
+        document.getElementById('finalForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const key = document.getElementById('key').value;
+            const essay = document.getElementById('essay').value;
+
+            
+            if (!key.includes('resonance')) { 
+                alert('Ключ не распознан.');
+                return;
+            }
+
+            const subject = `Новый сигнал от ${key.slice(0, 5)}...`;
+            const body = `Ключ: ${key}\n\nОтвет:\n${essay}\n\n---\nОтправлено с финальной формы.`;
+
+            
+            window.open(`mailto:${MY_SECRET_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+
+            
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('finalForm').style.display = 'none';
+        });
+    </script>
+</body>
+</html>
